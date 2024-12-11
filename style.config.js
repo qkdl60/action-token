@@ -1,9 +1,21 @@
 import StyleDictionary from "style-dictionary";
 
+StyleDictionary.registerPreprocessor({
+  name: "removeGlobalKey",
+  preprocessor: (dict) => {
+    const [key, ...rest] = Object.keys(dict);
+    if (key === "global") {
+      return dict[key];
+    }
+    return dict;
+  },
+});
+
 StyleDictionary.registerTransform({
   type: "value",
   transitive: true,
   name: "tailwind/fontSize",
+
   filter: (token) => {
     return token.type === "typography";
   },
@@ -14,6 +26,10 @@ StyleDictionary.registerTransform({
 });
 
 const sdConfig = {
+  log: {
+    verbosity: "verbose", // 'default' | 'silent' | 'verbose'
+  },
+  preprocessors: ["removeGlobalKey"],
   source: ["./tokens/**/*.json"],
   platforms: {
     js: {
